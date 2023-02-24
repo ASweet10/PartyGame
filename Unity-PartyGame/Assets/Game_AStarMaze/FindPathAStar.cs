@@ -7,6 +7,7 @@ public class FindPathAStar : MonoBehaviour
 {
     public Transform seeker, target;
     GridScript grid;
+    public List<GameObject> activePlayers = new List<GameObject>();
     private void Awake() {
         grid = gameObject.GetComponent<GridScript>();
     }
@@ -93,5 +94,25 @@ public class FindPathAStar : MonoBehaviour
         } else {
             return 14 * distX + 10 * (distY - distX);
         }
+    }
+
+    //Consider moving this to game manager script
+    // Observer pattern, when player takes trap damage
+    // this function is called and this script is simply given a new target
+    public Transform ChooseTargetByHealthPercentage()
+    {
+        float current = 100;
+        Transform newTarget = null;
+        for(int i = 0; i < activePlayers.Count; i++)
+        {
+            var health = activePlayers[i].GetComponent<PlayerHealth>().CurrentHealth;
+            if(health < current)
+            {
+                current = health;
+                newTarget = activePlayers[i].transform;
+            }
+        }
+
+        return newTarget;
     }
 }
